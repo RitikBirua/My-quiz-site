@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mahajanapadas Match — Quiz</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
+
+:root{
+  --bg:#15152A;
+  --surface:#1F1F3B;
+  --gold:#FFD166;
+  --teal:#06D6A0;
+  --wrong:#EF476F;
+  --text:#F4F4F9;
+  --muted:#9A9AB5;
+  --line:#33335c;
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+
+body{
+  background:
+    radial-gradient(circle at 15% 10%, #2a2a55 0%, transparent 45%),
+    radial-gradient(circle at 85% 90%, #24244a 0%, transparent 50%),
+    var(--bg);
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:'Inter', sans-serif;
+  color:var(--text);
+  padding:24px;
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}
+}
+
+.stage{
+  width:100%;
+  max-width:720px;
+}
+
+.title-row{
+  text-align:center;
+  margin-bottom:20px;
+}
+.title-row a{ text-decoration:none; }
+.title-row .wordmark{
+  font-family:'Archivo Black', sans-serif;
+  font-size:15px;
+  letter-spacing:0.15em;
+  color:var(--muted);
+  text-transform:uppercase;
+}
+
+.eyebrow{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:14px;
+  font-family:'JetBrains Mono', monospace;
+  font-size:13px;
+  letter-spacing:0.08em;
+  color:var(--muted);
+}
+.eyebrow .streak{ color:var(--gold); font-weight:700; }
+
+.progress-track{
+  height:6px;
+  border-radius:99px;
+  background:#2b2b52;
+  overflow:hidden;
+  margin-bottom:28px;
+}
+.progress-fill{
+  height:100%;
+  border-radius:99px;
+  background:linear-gradient(90deg, var(--teal), var(--gold));
+  transition:width .4s cubic-bezier(.65,0,.35,1);
+}
+
+.card{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:40px 36px;
+  box-shadow:0 30px 60px -20px rgba(0,0,0,0.6);
+  animation:flipIn .5s cubic-bezier(.2,.7,.3,1);
+}
+
+@keyframes flipIn{
+  from{ transform:translateY(10px); opacity:0; }
+  to{ transform:translateY(0); opacity:1; }
+}
+
+.category-badge{
+  display:inline-block;
+  font-family:'JetBrains Mono', monospace;
+  font-size:12px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--bg);
+  background:var(--gold);
+  padding:5px 12px;
+  border-radius:99px;
+  margin-bottom:18px;
+  font-weight:700;
+}
+
+h1.instructions{
+  font-family:'Archivo Black', sans-serif;
+  font-size:22px;
+  line-height:1.35;
+  margin-bottom:8px;
+  font-weight:400;
+}
+
+.subtext{
+  font-family:'Inter', sans-serif;
+  font-size:14px;
+  color:var(--muted);
+  margin-bottom:28px;
+}
+
+.match-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:24px;
+}
+
+.col-label{
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:10px;
+  display:block;
+}
+
+.match-list{
+  display:grid;
+  gap:10px;
+}
+
+.match-item{
+  text-align:left;
+  background:#26264a;
+  border:1.5px solid var(--line);
+  color:var(--text);
+  font-family:'Inter', sans-serif;
+  font-size:15px;
+  font-weight:500;
+  padding:13px 16px;
+  border-radius:12px;
+  cursor:pointer;
+  transition:border-color .15s ease, background .15s ease, transform .1s ease, opacity .3s ease;
+}
+
+.match-item:hover:not(:disabled){
+  border-color:var(--gold);
+  transform:translateY(-1px);
+}
+
+.match-item:disabled{
+  cursor:default;
+}
+
+.match-item.selected{
+  border-color:var(--gold);
+  background:rgba(255,209,102,0.12);
+}
+
+.match-item.correct{
+  background:rgba(6,214,160,0.15);
+  border-color:var(--teal);
+  opacity:0.55;
+}
+
+.match-item.wrong{
+  background:rgba(239,71,111,0.15);
+  border-color:var(--wrong);
+  animation:shake .3s ease;
+}
+
+@keyframes shake{
+  0%, 100%{ transform:translateX(0); }
+  25%{ transform:translateX(-4px); }
+  75%{ transform:translateX(4px); }
+}
+
+.footer-row{
+  margin-top:26px;
+  display:flex;
+  justify-content:flex-end;
+  min-height:44px;
+  align-items:center;
+}
+
+.next-btn{
+  font-family:'JetBrains Mono', monospace;
+  font-weight:700;
+  font-size:14px;
+  letter-spacing:0.04em;
+  text-transform:uppercase;
+  background:var(--gold);
+  color:var(--bg);
+  border:none;
+  padding:12px 22px;
+  border-radius:10px;
+  cursor:pointer;
+  opacity:0;
+  transform:translateY(6px);
+  animation:riseIn .3s ease forwards;
+}
+.next-btn:focus-visible, .match-item:focus-visible{
+  outline:2px solid var(--gold);
+  outline-offset:2px;
+}
+
+@keyframes riseIn{
+  to{opacity:1; transform:translateY(0);}
+}
+
+/* Results */
+.results{ text-align:center; }
+.results .big-score{
+  font-family:'Archivo Black', sans-serif;
+  font-size:64px;
+  background:linear-gradient(90deg, var(--gold), var(--teal));
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  line-height:1;
+  margin:10px 0 6px;
+}
+.results .verdict{
+  font-size:17px;
+  color:var(--muted);
+  margin-bottom:30px;
+}
+.results-actions{
+  display:flex;
+  gap:12px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+.replay-btn, .home-btn{
+  font-family:'JetBrains Mono', monospace;
+  font-weight:700;
+  font-size:14px;
+  letter-spacing:0.04em;
+  text-transform:uppercase;
+  padding:14px 26px;
+  border-radius:10px;
+  cursor:pointer;
+  text-decoration:none;
+  display:inline-block;
+  border:1.5px solid var(--gold);
+  background:transparent;
+  color:var(--gold);
+  transition:background .15s ease, color .15s ease;
+}
+.replay-btn:hover, .home-btn:hover{
+  background:var(--gold);
+  color:var(--bg);
+}
+.home-btn{
+  border-color:var(--line);
+  color:var(--muted);
+}
+.home-btn:hover{
+  background:transparent;
+  border-color:var(--muted);
+  color:var(--text);
+}
+
+@media (max-width:520px){
+  .match-grid{ grid-template-columns:1fr; }
+  .card{ padding:28px 22px; }
+}
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="title-row"><a href="index.html"><span class="wordmark">Mahajanapadas Match</span></a></div>
+  <div id="app"></div>
+</div>
+
+<script>
+// Each round presents a shuffled subset of Mahajanapada / Capital pairs to match.
+const ALL_PAIRS = [
+  {kingdom:"Magadha", capital:"Rajagriha"},
+  {kingdom:"Kosala", capital:"Shravasti"},
+  {kingdom:"Kashi", capital:"Varanasi"},
+  {kingdom:"Vajji", capital:"Vaishali"},
+  {kingdom:"Malla", capital:"Kushinara"},
+  {kingdom:"Chedi", capital:"Shuktimati"},
+  {kingdom:"Vatsa", capital:"Kaushambi"},
+  {kingdom:"Kuru", capital:"Indraprastha"},
+  {kingdom:"Panchala", capital:"Ahichhatra"},
+  {kingdom:"Matsya", capital:"Viratanagara"},
+  {kingdom:"Surasena", capital:"Mathura"},
+  {kingdom:"Avanti", capital:"Ujjaini"},
+  {kingdom:"Gandhara", capital:"Taxila"},
+  {kingdom:"Kamboja", capital:"Rajapura"},
+  {kingdom:"Anga", capital:"Champa"},
+  {kingdom:"Ashmaka", capital:"Potana"}
+];
+
+const ROUND_SIZE = 6;
+const TOTAL_ROUNDS = 3;
+
+let roundIndex = 0;
+let score = 0;
+let streak = 0;
+let bestStreak = 0;
+
+let currentPairs = [];
+let selectedKingdom = null;
+let matchedCount = 0;
+let wrongAttempts = 0;
+
+const app = document.getElementById('app');
+
+function shuffle(arr){
+  const a = [...arr];
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startRound(){
+  const pool = shuffle(ALL_PAIRS).slice(0, ROUND_SIZE);
+  currentPairs = pool;
+  matchedCount = 0;
+  wrongAttempts = 0;
+  selectedKingdom = null;
+  renderRound();
+}
+
+function renderRound(){
+  if(roundIndex >= TOTAL_ROUNDS){
+    renderResults();
+    return;
+  }
+
+  const kingdoms = shuffle(currentPairs.map(p => p.kingdom));
+  const capitals = shuffle(currentPairs.map(p => p.capital));
+  const pct = Math.round((roundIndex / TOTAL_ROUNDS) * 100);
+
+  app.innerHTML = `
+    <div class="eyebrow">
+      <span>ROUND ${roundIndex+1} / ${TOTAL_ROUNDS}</span>
+      <span class="streak">${streak > 1 ? '🔥 ' + streak + ' streak' : 'SCORE ' + score}</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+    <div class="card">
+      <span class="category-badge">Ancient India</span>
+      <h1 class="instructions">Match each Mahajanapada to its capital</h1>
+      <p class="subtext">Tap a kingdom on the left, then tap its capital on the right.</p>
+      <div class="match-grid">
+        <div>
+          <span class="col-label">Mahajanapada</span>
+          <div class="match-list" id="kingdom-list">
+            ${kingdoms.map(k => `<button class="match-item" data-kingdom="${k}">${k}</button>`).join('')}
+          </div>
+        </div>
+        <div>
+          <span class="col-label">Capital</span>
+          <div class="match-list" id="capital-list">
+            ${capitals.map(c => `<button class="match-item" data-capital="${c}">${c}</button>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div class="footer-row" id="footer-row"></div>
+    </div>
+  `;
+
+  document.querySelectorAll('[data-kingdom]').forEach(btn => {
+    btn.addEventListener('click', () => selectKingdom(btn));
+  });
+  document.querySelectorAll('[data-capital]').forEach(btn => {
+    btn.addEventListener('click', () => selectCapital(btn));
+  });
+}
+
+function selectKingdom(btn){
+  if(btn.disabled) return;
+  document.querySelectorAll('[data-kingdom]').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedKingdom = btn.dataset.kingdom;
+}
+
+function selectCapital(btn){
+  if(btn.disabled || !selectedKingdom) return;
+
+  const kingdomBtn = document.querySelector(`[data-kingdom="${selectedKingdom}"]`);
+  const correctPair = currentPairs.find(p => p.kingdom === selectedKingdom);
+  const isCorrect = correctPair && correctPair.capital === btn.dataset.capital;
+
+  if(isCorrect){
+    kingdomBtn.classList.remove('selected');
+    kingdomBtn.classList.add('correct');
+    kingdomBtn.disabled = true;
+    btn.classList.add('correct');
+    btn.disabled = true;
+    matchedCount++;
+    score++;
+    streak++;
+    bestStreak = Math.max(bestStreak, streak);
+  } else {
+    btn.classList.add('wrong');
+    kingdomBtn.classList.add('wrong');
+    streak = 0;
+    wrongAttempts++;
+    setTimeout(() => {
+      btn.classList.remove('wrong');
+      kingdomBtn.classList.remove('wrong', 'selected');
+    }, 350);
+  }
+
+  selectedKingdom = null;
+
+  if(matchedCount === currentPairs.length){
+    const isLastRound = roundIndex === TOTAL_ROUNDS - 1;
+    document.getElementById('footer-row').innerHTML = `
+      <button class="next-btn" id="next-btn">${isLastRound ? 'See results' : 'Next round →'}</button>
+    `;
+    document.getElementById('next-btn').addEventListener('click', () => {
+      roundIndex++;
+      if(roundIndex < TOTAL_ROUNDS) startRound();
+      else renderResults();
+    });
+  }
+}
+
+function renderResults(){
+  const total = TOTAL_ROUNDS * ROUND_SIZE;
+  const pct = Math.round((score / total) * 100);
+  let verdict;
+  if(pct === 100) verdict = "Perfect — you know the janapadas cold.";
+  else if(pct >= 80) verdict = "Strong recall of ancient India's map.";
+  else if(pct >= 60) verdict = "Good grasp, a few capitals slipped away.";
+  else verdict = "A few kingdoms to revisit before the rematch.";
+
+  app.innerHTML = `
+    <div class="card results">
+      <span class="category-badge">Final Result</span>
+      <div class="big-score">${score}/${total}</div>
+      <div class="verdict">${verdict}${bestStreak > 3 ? ` · Best streak: ${bestStreak} 🔥` : ''}</div>
+      <div class="results-actions">
+        <button class="replay-btn" id="replay-btn">Play again</button>
+        <a class="home-btn" href="index.html">All quizzes</a>
+      </div>
+    </div>
+  `;
+  document.getElementById('replay-btn').addEventListener('click', () => {
+    roundIndex = 0; score = 0; streak = 0; bestStreak = 0;
+    startRound();
+  });
+}
+
+startRound();
+</script>
+
+</body>
+</html>

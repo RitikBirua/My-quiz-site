@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signal — General Knowledge Quiz</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
+
+:root{
+  --bg:#15152A;
+  --surface:#1F1F3B;
+  --surface-raised:#28285070;
+  --gold:#FFD166;
+  --teal:#06D6A0;
+  --wrong:#EF476F;
+  --text:#F4F4F9;
+  --muted:#9A9AB5;
+  --line:#33335c;
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+
+body{
+  background:
+    radial-gradient(circle at 15% 10%, #2a2a55 0%, transparent 45%),
+    radial-gradient(circle at 85% 90%, #24244a 0%, transparent 50%),
+    var(--bg);
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:'Inter', sans-serif;
+  color:var(--text);
+  padding:24px;
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}
+}
+
+.stage{
+  width:100%;
+  max-width:640px;
+  perspective:1600px;
+}
+
+.eyebrow{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:14px;
+  font-family:'JetBrains Mono', monospace;
+  font-size:13px;
+  letter-spacing:0.08em;
+  color:var(--muted);
+}
+
+.eyebrow .streak{
+  color:var(--gold);
+  font-weight:700;
+}
+
+.progress-track{
+  height:6px;
+  border-radius:99px;
+  background:#2b2b52;
+  overflow:hidden;
+  margin-bottom:28px;
+}
+.progress-fill{
+  height:100%;
+  border-radius:99px;
+  background:linear-gradient(90deg, var(--teal), var(--gold));
+  transition:width .4s cubic-bezier(.65,0,.35,1);
+}
+
+.card{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:40px 36px;
+  box-shadow:0 30px 60px -20px rgba(0,0,0,0.6);
+  transform-style:preserve-3d;
+  animation:flipIn .5s cubic-bezier(.2,.7,.3,1);
+}
+
+@keyframes flipIn{
+  from{ transform:rotateX(-8deg) translateY(10px); opacity:0; }
+  to{ transform:rotateX(0) translateY(0); opacity:1; }
+}
+
+.category-badge{
+  display:inline-block;
+  font-family:'JetBrains Mono', monospace;
+  font-size:12px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--bg);
+  background:var(--teal);
+  padding:5px 12px;
+  border-radius:99px;
+  margin-bottom:18px;
+  font-weight:700;
+}
+
+h1.question{
+  font-family:'Archivo Black', sans-serif;
+  font-size:26px;
+  line-height:1.35;
+  margin-bottom:28px;
+  font-weight:400;
+}
+
+.options{
+  display:grid;
+  gap:12px;
+}
+
+.option{
+  text-align:left;
+  background:#26264a;
+  border:1.5px solid var(--line);
+  color:var(--text);
+  font-family:'Inter', sans-serif;
+  font-size:16px;
+  font-weight:500;
+  padding:16px 18px;
+  border-radius:12px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  transition:border-color .15s ease, background .15s ease, transform .1s ease;
+}
+
+.option:hover:not(:disabled){
+  border-color:var(--gold);
+  transform:translateY(-1px);
+}
+
+.option:disabled{
+  cursor:default;
+}
+
+.option .letter{
+  font-family:'JetBrains Mono', monospace;
+  font-size:13px;
+  color:var(--muted);
+  width:20px;
+  flex-shrink:0;
+}
+
+.option.correct{
+  background:rgba(6,214,160,0.15);
+  border-color:var(--teal);
+}
+.option.correct .letter{color:var(--teal);}
+
+.option.wrong{
+  background:rgba(239,71,111,0.15);
+  border-color:var(--wrong);
+}
+.option.wrong .letter{color:var(--wrong);}
+
+.footer-row{
+  margin-top:26px;
+  display:flex;
+  justify-content:flex-end;
+  min-height:44px;
+  align-items:center;
+}
+
+.next-btn{
+  font-family:'JetBrains Mono', monospace;
+  font-weight:700;
+  font-size:14px;
+  letter-spacing:0.04em;
+  text-transform:uppercase;
+  background:var(--gold);
+  color:var(--bg);
+  border:none;
+  padding:12px 22px;
+  border-radius:10px;
+  cursor:pointer;
+  opacity:0;
+  transform:translateY(6px);
+  animation:riseIn .3s ease forwards;
+}
+.next-btn:focus-visible, .option:focus-visible{
+  outline:2px solid var(--gold);
+  outline-offset:2px;
+}
+
+@keyframes riseIn{
+  to{opacity:1; transform:translateY(0);}
+}
+
+/* Results screen */
+.results{
+  text-align:center;
+}
+.results .big-score{
+  font-family:'Archivo Black', sans-serif;
+  font-size:64px;
+  background:linear-gradient(90deg, var(--gold), var(--teal));
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  line-height:1;
+  margin:10px 0 6px;
+}
+.results .verdict{
+  font-size:17px;
+  color:var(--muted);
+  margin-bottom:30px;
+}
+.replay-btn{
+  font-family:'JetBrains Mono', monospace;
+  font-weight:700;
+  font-size:14px;
+  letter-spacing:0.04em;
+  text-transform:uppercase;
+  background:transparent;
+  border:1.5px solid var(--gold);
+  color:var(--gold);
+  padding:14px 26px;
+  border-radius:10px;
+  cursor:pointer;
+  transition:background .15s ease, color .15s ease;
+}
+.replay-btn:hover{
+  background:var(--gold);
+  color:var(--bg);
+}
+
+.title-row{
+  text-align:center;
+  margin-bottom:20px;
+}
+.title-row .wordmark{
+  font-family:'Archivo Black', sans-serif;
+  font-size:15px;
+  letter-spacing:0.15em;
+  color:var(--muted);
+  text-transform:uppercase;
+}
+.title-row .wordmark span{color:var(--gold);}
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="title-row"><span class="wordmark">Signal <span>//</span> Trivia</span></div>
+  <div id="app"></div>
+</div>
+
+<script>
+const QUESTIONS = [
+  {category:"Geography", q:"Which country has the most natural lakes in the world?", options:["Canada","Russia","Finland","Brazil"], correct:0},
+  {category:"Science", q:"What gas do plants primarily absorb from the atmosphere for photosynthesis?", options:["Oxygen","Nitrogen","Carbon dioxide","Hydrogen"], correct:2},
+  {category:"History", q:"The Great Fire of London occurred in which year?", options:["1566","1666","1766","1866"], correct:1},
+  {category:"Art & Culture", q:"Who painted 'The Starry Night'?", options:["Claude Monet","Pablo Picasso","Vincent van Gogh","Salvador Dalí"], correct:2},
+  {category:"Sports", q:"How many players are on a standard volleyball team on the court?", options:["5","6","7","9"], correct:1},
+  {category:"Geography", q:"Mount Kilimanjaro is located in which country?", options:["Kenya","Ethiopia","Tanzania","Uganda"], correct:2},
+  {category:"Science", q:"What is the hardest natural substance on Earth?", options:["Gold","Quartz","Diamond","Titanium"], correct:2},
+  {category:"Literature", q:"Who wrote the novel '1984'?", options:["Aldous Huxley","George Orwell","Ray Bradbury","H.G. Wells"], correct:1},
+  {category:"Music", q:"Which instrument has 88 keys in its standard form?", options:["Organ","Piano","Harpsichord","Accordion"], correct:1},
+  {category:"History", q:"Which ancient wonder stood in the harbor of Alexandria?", options:["Hanging Gardens","Colossus of Rhodes","Lighthouse of Alexandria","Temple of Artemis"], correct:2},
+  {category:"Science", q:"What is the powerhouse of the cell?", options:["Nucleus","Ribosome","Mitochondria","Golgi apparatus"], correct:2},
+  {category:"Geography", q:"Which river is the longest in the world?", options:["Amazon","Nile","Yangtze","Mississippi"], correct:1},
+  {category:"Pop Culture", q:"In which decade was the first Star Wars film released?", options:["1960s","1970s","1980s","1990s"], correct:1},
+  {category:"Food", q:"Which country is credited with inventing pasta as commonly believed, though it originated elsewhere?", options:["China","Italy","France","Greece"], correct:1},
+  {category:"Space", q:"Which planet has the most moons confirmed as of recent counts?", options:["Jupiter","Saturn","Uranus","Neptune"], correct:1}
+];
+
+let current = 0;
+let score = 0;
+let answered = false;
+let streak = 0;
+let bestStreak = 0;
+
+const app = document.getElementById('app');
+const letters = ['A','B','C','D'];
+
+function render(){
+  if(current >= QUESTIONS.length){
+    renderResults();
+    return;
+  }
+  const item = QUESTIONS[current];
+  const pct = Math.round((current / QUESTIONS.length) * 100);
+
+  app.innerHTML = `
+    <div class="eyebrow">
+      <span>QUESTION ${current+1} / ${QUESTIONS.length}</span>
+      <span class="streak">${streak > 1 ? '🔥 ' + streak + ' streak' : 'SCORE ' + score}</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+    <div class="card">
+      <span class="category-badge">${item.category}</span>
+      <h1 class="question">${item.q}</h1>
+      <div class="options" id="options">
+        ${item.options.map((opt, i) => `
+          <button class="option" data-index="${i}">
+            <span class="letter">${letters[i]}</span>
+            <span>${opt}</span>
+          </button>
+        `).join('')}
+      </div>
+      <div class="footer-row" id="footer-row"></div>
+    </div>
+  `;
+
+  answered = false;
+  document.querySelectorAll('.option').forEach(btn => {
+    btn.addEventListener('click', () => selectAnswer(parseInt(btn.dataset.index)));
+  });
+}
+
+function selectAnswer(idx){
+  if(answered) return;
+  answered = true;
+  const item = QUESTIONS[current];
+  const buttons = document.querySelectorAll('.option');
+
+  buttons.forEach((btn, i) => {
+    btn.disabled = true;
+    if(i === item.correct) btn.classList.add('correct');
+    else if(i === idx && idx !== item.correct) btn.classList.add('wrong');
+  });
+
+  if(idx === item.correct){
+    score++;
+    streak++;
+    bestStreak = Math.max(bestStreak, streak);
+  } else {
+    streak = 0;
+  }
+
+  const isLast = current === QUESTIONS.length - 1;
+  document.getElementById('footer-row').innerHTML = `
+    <button class="next-btn" id="next-btn">${isLast ? 'See results' : 'Next question →'}</button>
+  `;
+  document.getElementById('next-btn').addEventListener('click', () => {
+    current++;
+    render();
+  });
+}
+
+function renderResults(){
+  const pct = Math.round((score / QUESTIONS.length) * 100);
+  let verdict;
+  if(pct === 100) verdict = "Flawless run. Nothing gets past you.";
+  else if(pct >= 80) verdict = "Sharp instincts — barely a stumble.";
+  else if(pct >= 60) verdict = "Solid showing. A few gaps to close.";
+  else if(pct >= 40) verdict = "Decent effort. Time for a rematch.";
+  else verdict = "Rough round — the trivia gods were unkind.";
+
+  app.innerHTML = `
+    <div class="card results">
+      <span class="category-badge" style="background:var(--gold)">Final Result</span>
+      <div class="big-score">${score}/${QUESTIONS.length}</div>
+      <div class="verdict">${verdict}${bestStreak > 2 ? ` · Best streak: ${bestStreak} 🔥` : ''}</div>
+      <button class="replay-btn" id="replay-btn">Play again</button>
+    </div>
+  `;
+  document.getElementById('replay-btn').addEventListener('click', () => {
+    current = 0; score = 0; streak = 0; bestStreak = 0;
+    render();
+  });
+}
+
+render();
+</script>
+
+</body>
+</html>

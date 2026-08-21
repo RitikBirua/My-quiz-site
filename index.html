@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signal — Trivia</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500&family=JetBrains+Mono:wght@500;700&display=swap');
+
+*{box-sizing:border-box; margin:0; padding:0;}
+
+html, body{
+  height:100%;
+}
+
+body{
+  background:
+    radial-gradient(circle at 15% 10%, #2a2a55 0%, transparent 45%),
+    radial-gradient(circle at 85% 90%, #24244a 0%, transparent 50%),
+    #15152A;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}
+}
+
+.site-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:22px 32px;
+  border-bottom:1px solid #26264a;
+}
+
+.site-header .brand{
+  font-family:'JetBrains Mono', monospace;
+  font-size:13px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:#F4F4F9;
+  font-weight:700;
+}
+
+.site-header nav{
+  display:flex;
+  gap:28px;
+}
+
+.site-header nav a{
+  font-family:'JetBrains Mono', monospace;
+  font-size:12px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color:#9A9AB5;
+  text-decoration:none;
+  transition:color .15s ease;
+}
+
+.site-header nav a:hover,
+.site-header nav a:focus-visible{
+  color:#FFD166;
+}
+
+main{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:60px 32px;
+}
+
+.scroll-cue{
+  position:absolute;
+  bottom:28px;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  font-family:'JetBrains Mono', monospace;
+  font-size:10px;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  color:#9A9AB5;
+  animation:bob 2s ease-in-out infinite;
+}
+
+@keyframes bob{
+  0%, 100%{ transform:translate(-50%, 0); }
+  50%{ transform:translate(-50%, 6px); }
+}
+
+.hero{
+  position:relative;
+  width:100%;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.quizzes-section{
+  padding:80px 32px 100px;
+  border-top:1px solid #26264a;
+}
+
+.quizzes-inner{
+  max-width:1040px;
+  margin:0 auto;
+}
+
+.section-heading{
+  margin-bottom:40px;
+}
+
+.section-heading .eyebrow-label{
+  font-family:'JetBrains Mono', monospace;
+  font-size:12px;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  color:#FFD166;
+  display:block;
+  margin-bottom:10px;
+}
+
+.section-heading h2{
+  font-family:'Archivo Black', sans-serif;
+  font-size:32px;
+  font-weight:400;
+  color:#F4F4F9;
+}
+
+.quiz-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));
+  gap:20px;
+}
+
+.quiz-card{
+  background:#1F1F3B;
+  border:1px solid #33335c;
+  border-radius:16px;
+  padding:26px;
+  text-decoration:none;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  transition:border-color .15s ease, transform .15s ease;
+}
+
+.quiz-card:hover,
+.quiz-card:focus-visible{
+  border-color:#FFD166;
+  transform:translateY(-3px);
+}
+
+.quiz-card .tag{
+  align-self:flex-start;
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  font-weight:700;
+  color:#15152A;
+  background:#06D6A0;
+  padding:4px 10px;
+  border-radius:99px;
+}
+
+.quiz-card h3{
+  font-family:'Archivo Black', sans-serif;
+  font-weight:400;
+  font-size:19px;
+  color:#F4F4F9;
+}
+
+.quiz-card p{
+  font-family:'Inter', sans-serif;
+  font-size:14px;
+  color:#9A9AB5;
+  line-height:1.5;
+}
+
+.quiz-card .meta{
+  margin-top:auto;
+  display:flex;
+  justify-content:space-between;
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  color:#9A9AB5;
+  padding-top:10px;
+  border-top:1px solid #33335c;
+}
+
+.site-footer{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:22px 32px;
+  border-top:1px solid #26264a;
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  letter-spacing:0.06em;
+  color:#9A9AB5;
+}
+
+.site-footer a{
+  color:#9A9AB5;
+  text-decoration:none;
+  margin-left:20px;
+  transition:color .15s ease;
+}
+
+.site-footer a:hover,
+.site-footer a:focus-visible{
+  color:#FFD166;
+}
+
+@media (max-width:560px){
+  .site-header, .site-footer{
+    flex-direction:column;
+    gap:14px;
+    text-align:center;
+  }
+  .site-footer a{ margin:0 8px; }
+}
+
+.logo{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:14px;
+  opacity:0;
+  animation:fadeIn 0.8s ease forwards;
+}
+
+@keyframes fadeIn{
+  from{ opacity:0; transform:translateY(8px); }
+  to{ opacity:1; transform:translateY(0); }
+}
+
+.mark{
+  width:64px;
+  height:64px;
+}
+
+.wordmark{
+  font-family:'Archivo Black', sans-serif;
+  font-size:28px;
+  letter-spacing:0.02em;
+  color:#F4F4F9;
+}
+
+.wordmark .accent{
+  color:#FFD166;
+}
+
+.tagline{
+  font-family:'JetBrains Mono', monospace;
+  font-size:12px;
+  letter-spacing:0.25em;
+  text-transform:uppercase;
+  color:#9A9AB5;
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <span class="brand">Quiz</span>
+  <nav>
+    <a href="#">Home</a>
+    <a href="#">Play</a>
+    <a href="#">Leaderboard</a>
+    <a href="#">About</a>
+  </nav>
+</header>
+
+<main>
+  <div class="hero">
+    <div class="logo">
+      <svg class="mark" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="32" cy="32" r="30" stroke="#33335c" stroke-width="2"/>
+        <path d="M20 32 L28 40 L44 22" stroke="#06D6A0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="32" cy="32" r="30" stroke="#FFD166" stroke-width="2" stroke-dasharray="6 10" opacity="0.6"/>
+      </svg>
+      <div class="wordmark">QUIZ</div>
+      <div class="tagline">General Knowledge</div>
+    </div>
+    <div class="scroll-cue">
+      <span>Scroll for quizzes</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9A9AB5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+  </div>
+</main>
+
+<section class="quizzes-section">
+  <div class="quizzes-inner">
+    <div class="section-heading">
+      <span class="eyebrow-label">Available now</span>
+      <h2>Pick a quiz</h2>
+    </div>
+    <div class="quiz-grid">
+      <a class="quiz-card" href="mahajanapadas-match.html">
+        <span class="tag">Mixed</span>
+        <h3>General Trivia</h3>
+        <p>Fifteen questions spanning geography, science, history, and pop culture.</p>
+        <div class="meta"><span>15 Qs</span><span>~5 min</span></div>
+      </a>
+      <a class="quiz-card" href="mahajanapadas-match.html">
+        <span class="tag">Science</span>
+        <h3>Science &amp; Nature</h3>
+        <p>Test your knowledge of biology, chemistry, physics, and the natural world.</p>
+        <div class="meta"><span>12 Qs</span><span>~4 min</span></div>
+      </a>
+      <a class="quiz-card" href="mahajanapadas-match.html">
+        <span class="tag">History</span>
+        <h3>World History</h3>
+        <p>From ancient empires to modern events — how much do you really remember?</p>
+        <div class="meta"><span>10 Qs</span><span>~4 min</span></div>
+      </a>
+      <a class="quiz-card" href="mahajanapadas-match.html">
+        <span class="tag">Culture</span>
+        <h3>Pop Culture</h3>
+        <p>Movies, music, and internet moments from the last few decades.</p>
+        <div class="meta"><span>12 Qs</span><span>~4 min</span></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <span>© 2026 Quiz. All rights reserved.</span>
+  <span>
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="#">Contact</a>
+  </span>
+</footer>
+
+</body>
+</html>
